@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,7 +59,9 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 
 public class MainActivity extends Activity {
@@ -71,6 +75,7 @@ public class MainActivity extends Activity {
 	private static final int CATEGORY_DETAIL = 1;
 	private static final int NO_MEMORY_CARD = 2;
 	private static final int TERMS = 3;
+	private final int REQUEST_PERMISSION_PHONE_STATE=1;
 	
     public RadioButton radEnable;
     public RadioButton radDisable;
@@ -102,6 +107,9 @@ public class MainActivity extends Activity {
         	showDialog(CATEGORY_DETAIL);
         
         context = this.getBaseContext();
+
+		showPhoneStatePermission();
+
         //showDialog(TERMS);
     }
     
@@ -290,13 +298,13 @@ public class MainActivity extends Activity {
             	Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.privacychoice.org/policy/mobile?policy=306ef01761f300e3c30ccfc534babf6b"));
             	startActivity(browserIntent);
             	break;
-            case R.id.menu_delete_all:
+            /*case R.id.menu_delete_all:
             	AlertDialog.Builder builderDelete = new AlertDialog.Builder(MainActivity.this);
             	builderDelete.setTitle(R.string.dialog_delete_all_title)
             	.setMessage(R.string.dialog_delete_all_content)
             	.setPositiveButton(R.string.dialog_delete_all_yes, new DialogInterface.OnClickListener() {
         			public void onClick(DialogInterface dialog, int id) {
-        				deleteAllRecords();
+        				//deleteAllRecords();
         				dialog.cancel();
         			}
         		})
@@ -306,14 +314,14 @@ public class MainActivity extends Activity {
         			}
         		})
         		.show();
-            	break;
+            	break;*/
             default:
             	break;
         }
         return super.onOptionsItemSelected(item);
     }
 	
-	private void deleteAllRecords()
+	/*private void deleteAllRecords()
 	{
 		String filepath = Environment.getExternalStorageDirectory().getPath() + "/" + FILE_DIRECTORY;
 		File file = new File(filepath);
@@ -343,7 +351,7 @@ public class MainActivity extends Activity {
 		
 		onResume();
 	}
-	
+	*/
 	private void activateNotification()
 	{
 		NotificationManager notificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -511,4 +519,56 @@ public class MainActivity extends Activity {
 
 		return res;
 	}
+
+	private void showPhoneStatePermission() {
+		int permissionCheck = ContextCompat.checkSelfPermission(
+				this, Manifest.permission.READ_PHONE_STATE);
+		if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+			if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+					Manifest.permission.READ_PHONE_STATE)) {
+				showExplanation("Permission Needed", "Rationale", Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
+			} else {
+				requestPermission(Manifest.permission.READ_PHONE_STATE, REQUEST_PERMISSION_PHONE_STATE);
+			}
+		} else {
+			Toast.makeText(MainActivity.this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(
+			int requestCode,
+			String permissions[],
+			int[] grantResults) {
+		switch (requestCode) {
+			case REQUEST_PERMISSION_PHONE_STATE:
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					Toast.makeText(MainActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(MainActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+				}
+		}
+	}
+
+	private void showExplanation(String title,
+								 String message,
+								 final String permission,
+								 final int permissionRequestCode) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(title)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						requestPermission(permission, permissionRequestCode);
+					}
+				});
+		builder.create().show();
+	}
+
+	private void requestPermission(String permissionName, int permissionRequestCode) {
+		ActivityCompat.requestPermissions(this,
+				new String[]{permissionName}, permissionRequestCode);
+	}
+
 }

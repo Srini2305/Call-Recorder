@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,11 +105,11 @@ public class MyCallsAdapter extends ArrayAdapter<Model> {
     	.setTitle(R.string.options_title)
     	.setItems(items, new DialogInterface.OnClickListener() {
     	    public void onClick(DialogInterface dialog, int item) {
-    	        if (item == 0)
+    	        /*if (item == 0)
     	    	{
     	        	DeleteRecord(fileName, position);
     	    	}
-    	    	else if (item == 1)
+    	    	else*/ if (item == 1)
     	    	{
     	    		//startPlay(fileName);
     	    		startPlayExternal(fileName);
@@ -125,7 +126,7 @@ public class MyCallsAdapter extends ArrayAdapter<Model> {
     	
     }
     
-    void DeleteRecord(final String fileName, final int position)
+    /*void DeleteRecord(final String fileName, final int position)
     {
     	new AlertDialog.Builder (context)
         .setTitle (R.string.confirm_delete_title)
@@ -158,7 +159,7 @@ public class MyCallsAdapter extends ArrayAdapter<Model> {
             }
         })
         .show ();
-    }
+    }*/
 	
 	void sendMail(String fileName)
 	{
@@ -189,6 +190,7 @@ public class MyCallsAdapter extends ArrayAdapter<Model> {
     		intentUri = Uri.parse("file://" + Environment.getExternalStorageDirectory().getPath() + "/" + FILE_DIRECTORY + "/" + charSequence);
     	else
     		intentUri = Uri.parse("file://" + context.getFilesDir().getAbsolutePath() + "/" + FILE_DIRECTORY + "/" + charSequence);
+		Log.e("Debug play file path: ", filepath + "  " + intentUri);
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_VIEW);
 		intent.setDataAndType(intentUri, "audio/mpeg");

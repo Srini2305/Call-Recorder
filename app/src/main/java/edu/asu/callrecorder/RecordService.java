@@ -87,20 +87,20 @@ public class RecordService extends Service {
 			
 			
 			try {
-				recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL);
-				recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+				recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+				recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 				recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 				myFileName = getFilename();
 				recorder.setOutputFile(myFileName);
 			}
 			catch (IllegalStateException e) {
 				Log.e("Call recorder IllegalStateException: ", "");
-				terminateAndEraseFile();
+				//terminateAndEraseFile();
 			}
-			catch (Exception e) {
+			/*catch (Exception e) {
 				Log.e("Call recorder Exception: ", "");
 				terminateAndEraseFile();
-			}
+			}*/
 			
 			OnErrorListener errorListener = new OnErrorListener() {
 
@@ -110,7 +110,7 @@ public class RecordService extends Service {
 					arg0.reset();
 					arg0.release();
 					arg0 = null;
-					terminateAndEraseFile();
+					//terminateAndEraseFile();
 				}
 				
 			};
@@ -123,7 +123,7 @@ public class RecordService extends Service {
 					arg0.reset();
 					arg0.release();
 					arg0 = null;
-					terminateAndEraseFile();
+					//terminateAndEraseFile();
 				}
 				
 			};
@@ -178,16 +178,16 @@ public class RecordService extends Service {
 		    	
 			} catch (IllegalStateException e) {
 				Log.e("Call recorder IllegalStateException: ", "");
-				terminateAndEraseFile();
+				//terminateAndEraseFile();
 				e.printStackTrace();
 			} catch (IOException e) {
 				Log.e("Call recorder IOException: ", "");
-				terminateAndEraseFile();
+				//terminateAndEraseFile();
 				e.printStackTrace();
 			}
 			catch (Exception e) {
 				Log.e("Call recorder Exception: ", "");
-				terminateAndEraseFile();
+				//terminateAndEraseFile();
 				e.printStackTrace();
 			}
 			
@@ -217,7 +217,7 @@ public class RecordService extends Service {
 	/**
 	 * in case it is impossible to record
 	 */
-	private void terminateAndEraseFile()
+	/*private void terminateAndEraseFile()
 	{
 		try {
 			recorder.stop();
@@ -237,7 +237,7 @@ public class RecordService extends Service {
 		}
 		Toast toast = Toast.makeText(this, this.getString(R.string.record_impossible), Toast.LENGTH_LONG);
     	toast.show();
-	}
+	}*/
 
 	@Override
 	public void onDestroy() {
@@ -256,11 +256,12 @@ public class RecordService extends Service {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		
+
 		String myDate = new String();
 		myDate = (String) DateFormat.format("yyyyMMddkkmmss", new Date());
-
-		return (file.getAbsolutePath() + "/d" + myDate + "p" + phoneNumber + ".mp3");
+		String fileName = file.getAbsolutePath() + "/d" + myDate + "p" + phoneNumber + ".mp3";
+		//Log.e("Debugging file path: ", filepath + "  " + fileName);
+		return (fileName);
 	}
 
 }

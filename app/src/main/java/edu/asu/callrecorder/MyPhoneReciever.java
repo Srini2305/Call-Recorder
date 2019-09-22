@@ -50,7 +50,7 @@ public class MyPhoneReciever extends BroadcastReceiver {
 				{
 					Intent myIntent = new Intent(context, RecordService.class);
 					myIntent.putExtra("commandType", STATE_CALL_START);
-					myIntent.putExtra("phoneNumber",  phoneNumber);
+					myIntent.putExtra("phoneNumber", phoneNumber);
 					context.startService(myIntent);
 				}
 				else if (intent.getStringExtra(TelephonyManager.EXTRA_STATE).equals(TelephonyManager.EXTRA_STATE_IDLE)) 
